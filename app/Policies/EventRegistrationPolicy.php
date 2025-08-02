@@ -3,11 +3,11 @@
 namespace App\Policies;
 
 use App\Enums\UserRole;
-use App\Models\Event;
+use App\Models\EventRegistration;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class EventPolicy
+class EventRegistrationPolicy
 {
     use HandlesAuthorization;
 
@@ -16,7 +16,7 @@ class EventPolicy
         return $user->role === UserRole::Admin;
     }
 
-    public function view(User $user, Event $event): bool
+    public function view(User $user, EventRegistration $eventRegistration): bool
     {
         return $user->role === UserRole::Admin;
     }
@@ -26,13 +26,18 @@ class EventPolicy
         return $user->role === UserRole::Admin;
     }
 
-    public function update(User $user, Event $event): bool
+    public function update(User $user, EventRegistration $eventRegistration): bool
     {
         return $user->role === UserRole::Admin;
     }
 
-    public function delete(User $user, Event $event): bool
+    public function delete(User $user, EventRegistration $eventRegistration): bool
     {
-        return $user->role === UserRole::Admin && $event->registrations()->count() === 0;
+        return $user->role === UserRole::Admin;
+    }
+
+    public function viewCreateModalData(User $user): bool
+    {
+        return $user->role === UserRole::Admin;
     }
 }

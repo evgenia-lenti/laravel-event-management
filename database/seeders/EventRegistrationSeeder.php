@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Jobs\UpdateEventRegistrationCount;
 use App\Models\Event;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -21,9 +20,6 @@ class EventRegistrationSeeder extends Seeder
             $event->registrations()->syncWithoutDetaching(
                 $users->random(rand(0, 5))->pluck('id')
             );
-
-            // update the event registration count
-            UpdateEventRegistrationCount::dispatch($event);
         });
     }
 }

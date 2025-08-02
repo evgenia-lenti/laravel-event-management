@@ -2,6 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Event;
+use App\Models\EventRegistration;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -33,6 +36,17 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+            ],
+            'permissions' => [
+                'events' => [
+                    'viewAny' => $request->user()?->can('view-any', Event::class),
+                ],
+                'users' => [
+                    'viewAny' => $request->user()?->can('view-any', User::class),
+                ],
+                'registrations' => [
+                    'viewAny' => $request->user()?->can('view-any', EventRegistration::class),
+                ],
             ],
         ];
     }

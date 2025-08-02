@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\EventStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
@@ -26,8 +27,10 @@ class Event extends Model
         'event_date' => 'datetime',
     ];
 
-    public function registrations()
+    public function registrations(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'event_registrations')->withTimestamps();
+        return $this->belongsToMany(User::class, 'event_registrations')
+            ->using(EventRegistration::class)
+            ->withTimestamps();
     }
 }
