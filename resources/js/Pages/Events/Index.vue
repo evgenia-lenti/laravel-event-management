@@ -1,8 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head, Link, router} from '@inertiajs/vue3';
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import EventRow from "@/Pages/Events/Partials/EventRow.vue";
+import LoadingIndicator from "@/Components/LoadingIndicator.vue";
 
 defineProps({
     events: Object,
@@ -10,11 +11,26 @@ defineProps({
     can: Object,
 });
 
-const search = ref('');
+const search = ref('')
+const isLoading = ref(true)
+
+// Set up event listeners for Inertia page visits
+onMounted(() => {
+    isLoading.value = false
+
+    router.on('start', () => {
+        isLoading.value = true
+    })
+
+    router.on('finish', () => {
+        isLoading.value = false
+    })
+})
 
 function clearSearch() {
-    search.value = '';
-    router.get(route('admin.events.index'));
+    search.value = ''
+    isLoading.value = true
+    router.get(route('admin.events.index'))
 }
 </script>
 
@@ -26,7 +42,11 @@ function clearSearch() {
             <main class="mt-24">
                 <div class="mx-auto px-4 pb-12 sm:px-6 lg:px-8">
                     <div class="rounded-lg bg-white px-5 py-6 shadow-sm sm:px-6">
-                        <div class="px-4 sm:px-6 lg:px-8">
+
+                        <!-- Loading indicator -->
+                        <LoadingIndicator v-if="isLoading" message="Loading events..." />
+
+                        <div v-else class="px-4 sm:px-6 lg:px-8">
                             <div class="sm:flex sm:items-center">
                                 <div class="sm:flex-auto">
                                     <h1 class="text-base font-semibold text-gray-800">Events</h1>

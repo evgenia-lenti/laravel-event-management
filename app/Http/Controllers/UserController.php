@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     use AuthorizesRequests;
-
     public function __construct(
         protected UserQueryService $userQueryService,
         protected UserService $userService
@@ -53,10 +52,18 @@ class UserController extends Controller
     {
         $this->authorize('create', User::class);
 
-        $this->userService->createUser($request->validated());
+        try {
+            $this->userService->createUser($request->validated());
 
-        return redirect()->route('admin.users.index')
-            ->with('success', 'User created successfully.');
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', 'User created successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to create the user: ' . $e->getMessage());
+        }
     }
 
     public function edit(User $user)
@@ -73,15 +80,26 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
 
-        $this->userService->updateUser($user, $request->validated());
+        try {
+            $this->userService->updateUser($user, $request->validated());
 
-        return redirect()->route('admin.users.index')
-            ->with('success', 'User updated successfully.');
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', 'User updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to update the user: ' . $e->getMessage());
+        }
     }
 
     public function show(User $user)
     {
         $this->authorize('view', $user);
+
+        // Load user's registrations count
+        $user->loadCount('registeredEvents');
 
         return inertia('Users/Show', [
             'user' => UserResource::make($user)
@@ -92,9 +110,17 @@ class UserController extends Controller
     {
         $this->authorize('delete', $user);
 
-        $this->userService->deleteUser($user);
+        try {
+            $this->userService->deleteUser($user);
 
-        return redirect()->route('admin.users.index')
-            ->with('success', 'User deleted successfully.');
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', 'User deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to delete the user: ' . $e->getMessage());
+        }
     }
 }

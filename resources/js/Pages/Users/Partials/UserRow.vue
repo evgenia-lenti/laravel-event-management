@@ -8,11 +8,15 @@ const props = defineProps({
 
 const showDeleteModal = ref(false);
 
-const deleteEvent = () => {
+const deleteUser = () => {
     router.delete(route('admin.users.destroy', props.user.id), {
-        onFinish: () => (showDeleteModal.value = false),
-    });
-};
+        onFinish: () => {
+            showDeleteModal.value = false;
+        },
+        preserveScroll: false,
+        preserveState: false
+    })
+}
 </script>
 
 <template>
@@ -55,7 +59,7 @@ const deleteEvent = () => {
                     Cancel
                 </button>
                 <button
-                    @click="deleteEvent"
+                    @click="deleteUser"
                     class="px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-700">
                     Delete
                 </button>

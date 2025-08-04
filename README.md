@@ -1,61 +1,176 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Event Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A comprehensive event management system built with Laravel and Vue.js. This application allows users to create, manage, and register for events.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- User authentication and role-based authorization
+- Event creation and management
+- Event registration system
+- Dashboard with statistics
+- RESTful API with token-based authentication
+- Responsive UI built with Vue.js and Tailwind CSS
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2 or higher
+- Composer
+- Node.js and npm
+- MySQL (default) or SQLite
 
-## Learning Laravel
+## Setup Instructions
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. Clone the repository
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+git clone https://github.com/evgenia-lenti/laravel-event-management.git
+cd laravel-event-management
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Install PHP dependencies
 
-## Laravel Sponsors
+```bash
+composer install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 3. Install JavaScript dependencies
 
-### Premium Partners
+```bash
+npm install
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 4. Configure environment variables
 
-## Contributing
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 5. Set up the database
 
-## Code of Conduct
+By default, the application uses MySQL. You'll need to create a database named `event-management`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+# Create a MySQL database
+# You can use your preferred MySQL client or run:
+# mysql -u root -e "CREATE DATABASE IF NOT EXISTS `event-management`;"
 
-## Security Vulnerabilities
+# Run migrations and seed the database
+php artisan migrate --seed
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you prefer to use SQLite, update the database configuration in the `.env` file:
+
+```bash
+# For SQLite, create the database file
+touch database/database.sqlite
+
+# Update .env to use SQLite
+# DB_CONNECTION=sqlite
+```
+
+### 6. Build frontend assets
+
+```bash
+npm run build
+```
+
+### 7. Start the development server
+
+```bash
+# Option 1: Using the Laravel development server
+php artisan serve
+
+# Option 2: Using the custom dev script (runs multiple services)
+composer dev
+```
+
+The application will be available at http://localhost:8000
+
+## Default Admin Credentials
+
+After seeding the database, you can log in with the following admin accounts:
+
+| Name           | Email                 | Password  |
+|----------------|------------------------|-----------|
+| Evgenia Lenti  | evgenia@lenti.com     | password  |
+| Nikos Ioannidis| nikos@ioannidis.com   | password  |
+
+## Default User Credentials
+
+The database seeder also creates 50 regular users with the "user" role. You can log in with any of these accounts:
+
+| Email                  | Password  | Role  |
+|------------------------|-----------|-------|
+| [generated-email]      | password  | user  |
+
+The emails for these users are randomly generated during seeding. You can check the database or use any of the seeded user accounts for testing.
+
+## API Documentation
+
+The project includes comprehensive API documentation generated using [Scribe](https://scribe.knuckles.wtf/laravel/). This documentation provides detailed information about all available API endpoints, request parameters, response formats, and authentication requirements.
+
+### Accessing the Documentation
+
+After setting up the application, you can access the API documentation at:
+
+```
+http://localhost:8000/docs
+```
+
+The documentation includes:
+- Interactive API explorer with "Try It Out" functionality
+- Authentication instructions
+- Request and response examples
+- Detailed parameter descriptions
+
+### Generating/Updating Documentation
+
+If you make changes to the API endpoints or want to regenerate the documentation, run:
+
+```bash
+php artisan scribe:generate
+```
+
+This will update the documentation based on the latest code and annotations in your API controllers.
+
+## Key Design Decisions
+
+### Architecture
+
+- **MVC Pattern**: The application follows the Model-View-Controller pattern for clear separation of concerns.
+- **Service Layer**: Business logic is encapsulated in service classes to keep controllers thin.
+- **Repository Pattern**: Data access is abstracted through repositories for better testability.
+- **Policy-based Authorization**: Laravel policies are used for fine-grained access control.
+- **DRY Principle**: Don't Repeat Yourself approach is used throughout the codebase to minimize duplication and improve maintainability.
+- **SOLID Principles**: The application follows SOLID design principles for creating more maintainable, extensible, and testable code.
+
+### Frontend
+
+- **Inertia.js**: Used to build a single-page application with Vue.js while leveraging Laravel's routing and controllers.
+- **Vue.js 3**: Component-based UI with the Composition API.
+- **Tailwind CSS**: Utility-first CSS framework for responsive design.
+- **Headless UI**: Accessible UI components for Vue.js.
+
+### API
+
+- **RESTful Design**: The API follows REST principles with resource-based endpoints.
+- **API Versioning**: Endpoints are versioned (v1) for better maintainability.
+- **Token Authentication**: Laravel Sanctum is used for API authentication.
+- **API Documentation**: Scribe is used to generate API documentation.
+
+### Database
+
+- **Migrations**: Database schema is defined using migrations for version control.
+- **Seeders**: Sample data is provided through seeders for testing and development.
+- **Eloquent ORM**: Laravel's ORM is used for database interactions.
+- **Relationships**: Models are related through Eloquent relationships.
+
+### Testing
+
+- **PHPUnit**: Used for unit and feature tests.
+- **Factory Pattern**: Test data is generated using factories.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

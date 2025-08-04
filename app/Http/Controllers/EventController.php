@@ -24,8 +24,6 @@ class EventController extends Controller
 
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Event::class);
-
         $events = $this->eventQueryService->getEvents($request->get('search'));
 
         return inertia('Events/Index', [
@@ -53,10 +51,18 @@ class EventController extends Controller
     {
         $this->authorize('create', Event::class);
 
-        $this->eventService->createEvent($request->validated());
+        try {
+            $this->eventService->createEvent($request->validated());
 
-        return redirect()->route('admin.events.index')
-            ->with('success', 'Event created successfully.');
+            return redirect()
+                ->route('admin.events.index')
+                ->with('success', 'Event created successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to create the event: ' . $e->getMessage());
+        }
     }
 
     public function edit(Event $event)
@@ -73,10 +79,18 @@ class EventController extends Controller
     {
         $this->authorize('update', $event);
 
-        $this->eventService->updateEvent($event, $request->validated());
+        try {
+            $this->eventService->updateEvent($event, $request->validated());
 
-        return redirect()->route('admin.events.index')
-            ->with('success', 'Event updated successfully.');
+            return redirect()
+                ->route('admin.events.index')
+                ->with('success', 'Event updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to update the event: ' . $e->getMessage());
+        }
     }
 
     public function show(Event $event)
@@ -92,9 +106,17 @@ class EventController extends Controller
     {
         $this->authorize('delete', $event);
 
-        $this->eventService->deleteEvent($event);
+        try {
+            $this->eventService->deleteEvent($event);
 
-        return redirect()->route('admin.events.index')
-            ->with('success', 'Event deleted successfully.');
+            return redirect()
+                ->route('admin.events.index')
+                ->with('success', 'Event deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to delete the event: ' . $e->getMessage());
+        }
     }
 }

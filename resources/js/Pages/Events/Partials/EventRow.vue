@@ -1,18 +1,38 @@
 <script setup>
-import { ref } from 'vue';
+import {computed, ref} from 'vue';
 import {Link, router} from '@inertiajs/vue3';
 
 const props = defineProps({
     event: Object
-});
+})
 
-const showDeleteModal = ref(false);
+const showDeleteModal = ref(false)
+
+const displayDate = computed(() => {
+    if (!props.event?.eventDate) return ''
+
+    // Parse the ISO date format (YYYY-MM-DDTHH:MM)
+    const date = new Date(props.event.eventDate)
+
+    // Format to DD/MM/YYYY HH:MM
+    const day = date.getDate().toString().padStart(2, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const year = date.getFullYear()
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`
+});
 
 const deleteEvent = () => {
     router.delete(route('admin.events.destroy', props.event.id), {
-        onFinish: () => (showDeleteModal.value = false),
-    });
-};
+        onFinish: () => {
+            showDeleteModal.value = false
+        },
+        preserveScroll: false,
+        preserveState: false
+    })
+}
 </script>
 
 <template>
@@ -24,7 +44,7 @@ const deleteEvent = () => {
         </td>
         <td class="pr-3 py-4 text-sm text-gray-800 truncate max-w-[200px]" :title="event.description">{{ event.description }}
         </td>
-        <td class="pr-3 py-4 text-sm text-gray-800 whitespace-nowrap">{{ event.eventDate }}</td>
+        <td class="pr-3 py-4 text-sm text-gray-800 whitespace-nowrap">{{ displayDate }}</td>
         <td class="pr-3 py-4 text-sm text-gray-800 whitespace-nowrap">{{ event.location }}</td>
         <td class="pr-3 py-4 text-sm text-gray-800 text-center">{{ event.capacity }}</td>
         <td class="pr-3 py-4 text-sm text-gray-800 text-center">{{ event.status.label }}</td>

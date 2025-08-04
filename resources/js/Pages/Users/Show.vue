@@ -44,7 +44,7 @@ const props = defineProps({
             <!-- Current Registrations Count -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Current Registrations</label>
-                <p class="mt-1 text-gray-900">{{ user.data.current_registrations_count }}</p>
+                <p class="mt-1 text-gray-900">{{ user.data.registeredEventsCount }}</p>
             </div>
 
             <!-- Back Button -->

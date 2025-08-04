@@ -1,9 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import RegistrationRow from "@/Pages/Registrations/Partials/RegistrationRow.vue";
 import RegistrationModal from "@/Pages/Registrations/Partials/RegistrationModal.vue";
+import LoadingIndicator from "@/Components/LoadingIndicator.vue";
+import axios from 'axios';
 
 defineProps({
     registrations: Object,
@@ -17,22 +19,35 @@ const searchUser = ref('')
 const searchEvent = ref('')
 const showModal = ref(false)
 const isModalLoaded = ref(false)
-const users = ref([])
-const events = ref([])
+const modalUsers = ref([])
+const modalEvents = ref([])
+const isLoading = ref(true)
+
+// Set up event listeners for Inertia page visits
+onMounted(() => {
+    isLoading.value = false
+
+    router.on('start', () => {
+        isLoading.value = true
+    })
+
+    router.on('finish', () => {
+        isLoading.value = false
+    })
+})
 
 const openModal = () => {
     if (!isModalLoaded.value) {
-        router.visit(route('admin.registrations.modal-data'), {
-            only: ['users', 'events'],
-            preserveState: true,
-            replace: true,
-            onSuccess: (page) => {
-                users.value = page.props.users
-                events.value = page.props.events
+        axios.get(route('admin.registrations.modal-data'))
+            .then((response) => {
+                modalUsers.value = response.data.users.data
+                modalEvents.value = response.data.events.data
                 isModalLoaded.value = true
                 showModal.value = true
-            }
-        });
+            })
+            .catch((error) => {
+                console.error('Error loading modal data:', error)
+            })
     } else {
         showModal.value = true
     }
@@ -42,7 +57,7 @@ function applyFilters() {
     router.get(route('admin.registrations.index'), {
         search_user: searchUser.value,
         search_event: searchEvent.value,
-    });
+    })
 }
 
 function clearFilters() {
@@ -60,6 +75,10 @@ function clearFilters() {
             <main class="mt-24">
                 <div class="mx-auto px-4 pb-12 sm:px-6 lg:px-8">
                     <div class="rounded-lg bg-white px-5 py-6 shadow-sm sm:px-6">
+
+                        <!-- Loading indicator -->
+                        <LoadingIndicator v-if="isLoading" message="Loading registrations..." />
+
                         <div class="px-4 sm:px-6 lg:px-8">
                             <!-- Header -->
                             <div class="sm:flex sm:items-center">
@@ -70,11 +89,20 @@ function clearFilters() {
                                     </p>
                                 </div>
 
-                                <button
-                                    @click="openModal"
-                                    class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">
-                                    Add Registration
-                                </button>
+                                <div class="flex space-x-2">
+                                    <button
+                                        @click="openModal"
+                                        class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">
+                                        Add Registration
+                                    </button>
+
+                                    <a
+                                        :href="route('admin.registrations.export')"
+                                        target="_blank"
+                                        class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">
+                                        Export CSV
+                                    </a>
+                                </div>
                             </div>
 
                             <!-- Search Filters -->
@@ -165,8 +193,8 @@ function clearFilters() {
 
                         <RegistrationModal
                             v-if="showModal"
-                            :users="users"
-                            :events="events"
+                            :users="modalUsers"
+                            :events="modalEvents"
                             @close="showModal = false"/>
                     </div>
                 </div>

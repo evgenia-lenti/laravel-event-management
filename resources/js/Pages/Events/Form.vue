@@ -10,7 +10,7 @@ const props = defineProps({
 const form = useForm({
     title: props.event?.data.title || '',
     description: props.event?.data.description || '',
-    event_date: props.event?.data.event_date || '',
+    event_date: props.event?.data.eventDate || '',
     location: props.event?.data.location || '',
     capacity: props.event?.data.capacity || '',
     status: props.event?.data.status?.value || props.statuses[0]?.value || ''

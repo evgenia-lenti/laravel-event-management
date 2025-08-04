@@ -48,6 +48,10 @@ class HandleInertiaRequests extends Middleware
                     'viewAny' => $request->user()?->can('view-any', EventRegistration::class),
                 ],
             ],
+            'flash' => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+            ],
         ];
     }
 }

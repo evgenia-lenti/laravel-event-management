@@ -12,13 +12,14 @@ class UserPolicy
 
     public function before(User $user, string $ability): ?bool
     {
-        // if user is admin will return true. Otherwise, it will proceed with the rest checks
-        if ($user->role === UserRole::Admin) {
+        // Only grant automatic access for certain abilities
+        if ($user->role === UserRole::Admin && $ability != 'delete') {
             return true;
         }
 
         return null;
     }
+
 
     public function viewAny(User $user): bool
     {
@@ -42,6 +43,6 @@ class UserPolicy
 
     public function delete(User $user, User $model): bool
     {
-        return false;
+        return $model->registeredEvents()->count() === 0;
     }
 }

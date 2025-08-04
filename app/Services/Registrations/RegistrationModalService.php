@@ -9,7 +9,7 @@ class RegistrationModalService
 {
     public function getUsers()
     {
-        return User::select('id', 'name')->orderBy('name')->get();
+        return User::select('id', 'name', 'email')->orderBy('name')->get();
     }
 
     public function getEvents()

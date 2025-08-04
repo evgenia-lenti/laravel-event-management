@@ -13,14 +13,14 @@ class EventResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'eventDate' => $this->event_date->format('d/m/Y H:i'),
+            'eventDate' => $this->event_date ? $this->event_date->format('Y-m-d\TH:i') : null,
             'location' => $this->location,
             'capacity' => $this->capacity,
             'status' => EventStatusResource::make($this->status),
             'currentRegistrationsCount' => $this->current_registrations_count,
             'can' => [
-                'update' => $request->user()->can('update', $this->resource),
-                'delete' => $request->user()->can('delete', $this->resource),
+                'update' => $request->user()?->can('update', $this->resource),
+                'delete' => $request->user()?->can('delete', $this->resource),
             ],
         ];
     }

@@ -15,6 +15,7 @@ use App\Services\Registrations\RegistrationService;
 use App\Services\Users\UserQueryService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Throwable;
 
 class RegistrationController extends Controller
 {
@@ -51,33 +52,53 @@ class RegistrationController extends Controller
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function store(RegistrationRequest $request)
     {
         $this->authorize('create', EventRegistration::class);
 
-        $this->registrationService->registerUserToEvent($request->validated());
+        try {
+            $this->registrationService->registerUserToEvent($request->validated());
 
-        return redirect()
-            ->route('admin.registrations.index')
-            ->with('success', 'Registration added successfully.');
+            return redirect()
+                ->route('admin.registrations.index')
+                ->with('success', 'Registration added successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to create the registration: ' . $e->getMessage());
+        }
     }
 
     public function destroy(EventRegistration $registration)
     {
         $this->authorize('delete', $registration);
 
-        $this->registrationService->unregister($registration);
+        try {
+            $this->registrationService->unregister($registration);
 
-        return redirect()
-            ->route('admin.registrations.index')
-            ->with('success', 'Registration deleted successfully.');
+            return redirect()
+                ->route('admin.registrations.index')
+                ->with('success', 'Registration deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to delete the registration: ' . $e->getMessage());
+        }
     }
 
-    public function modalData(RegistrationModalService $service)
+    public function modalData(RegistrationModalService $registrationModalService)
     {
-        return inertia('Registrations/Index', [
-            'users' => UserRegistrationModalResource::collection($service->getUsers()),
-            'events' => EventRegistrationModalResource::collection($service->getEvents()),
+        return response()->json([
+            'users' => [
+                'data' => UserRegistrationModalResource::collection($registrationModalService->getUsers())
+            ],
+            'events' => [
+                'data' => EventRegistrationModalResource::collection($registrationModalService->getEvents())
+            ],
         ]);
     }
 }

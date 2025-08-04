@@ -49,6 +49,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if the user has the 'user' role and is trying to access the web interface
+        if (Auth::user()->role === \App\Enums\UserRole::User && !$this->is('api/*')) {
+            Auth::logout(); // Log them out immediately
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Regular users cannot access the web interface. Please use the API.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

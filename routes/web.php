@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\RegistrationExportController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -17,9 +19,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -27,30 +29,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Admin Events Management
-Route::middleware(['auth', 'verified'])
+Route::middleware(['auth', 'verified', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-    Route::resource('events', EventController::class);
-});
+        // Events Management
+        Route::resource('/events', EventController::class);
 
-// Admin Users Management
-Route::middleware(['auth', 'verified'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        Route::resource('users', UserController::class);
-    });
+        // Users Management
+        Route::resource('/users', UserController::class);
 
-// Admin Registrations Management
-Route::middleware(['auth', 'verified'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        // Loading for user - event registration modal
-        Route::get('registrations/modal-data', [RegistrationController::class, 'modalData'])->name('registrations.modal-data');
-        Route::resource('registrations', RegistrationController::class)->only(['index', 'store', 'destroy']);
+        // Registrations Management
+        Route::get('/registrations/modal-data', [RegistrationController::class, 'modalData'])
+            ->name('registrations.modal-data');
+        Route::get('/registrations/export', [RegistrationExportController::class, 'export'])
+            ->name('registrations.export');
+        Route::resource('/registrations', RegistrationController::class)
+            ->only(['index', 'store', 'destroy']);
     });
 
 

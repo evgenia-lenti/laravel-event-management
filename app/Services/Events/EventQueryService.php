@@ -2,6 +2,8 @@
 
 namespace App\Services\Events;
 
+use App\Enums\EventStatus;
+use App\Enums\UserRole;
 use App\Models\Event;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -15,9 +17,8 @@ class EventQueryService
         $user = Auth::user();
         $query = Event::query();
 
-        // if auth user is not admin can see only published events
-        if (!$user->can('viewAny', Event::class)) {
-            $query->where('status', 'published');
+        if (!$user || $user->role !== UserRole::Admin) {
+            $query->where('status', EventStatus::Published);
         }
 
         return $query

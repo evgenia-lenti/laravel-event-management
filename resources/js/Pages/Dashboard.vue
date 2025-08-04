@@ -1,7 +1,14 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import StatisticsWidget from '@/Components/StatisticsWidget.vue';
 import { Head } from '@inertiajs/vue3';
 
+defineProps({
+    statistics: {
+        type: Object,
+        required: true
+    }
+});
 </script>
 
 <template>
@@ -9,24 +16,13 @@ import { Head } from '@inertiajs/vue3';
 
     <AuthenticatedLayout>
         <div class="min-h-full">
-            <main class="-mt-32">
+            <main class="mt-32">
                 <div class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
                     <div class="rounded-lg bg-white px-5 py-6 shadow-sm sm:px-6">
-                        <!-- Your content -->
+                        <StatisticsWidget :statistics="statistics" />
                     </div>
                 </div>
             </main>
-        </div>
-
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div
-                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
-                        You're logged in!
-                    </div>
-                </div>
-            </div>
         </div>
     </AuthenticatedLayout>
 </template>

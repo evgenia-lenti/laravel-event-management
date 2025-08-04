@@ -4,14 +4,18 @@ import {Link, router} from "@inertiajs/vue3";
 
 const props = defineProps({
     registration: Object
-});
+})
 
-const showDeleteModal = ref(false);
+const showDeleteModal = ref(false)
 
 function removeRegistration() {
     router.delete(route('admin.registrations.destroy', props.registration.id), {
-        onFinish: () => (showDeleteModal.value = false),
-    });
+        onFinish: () => {
+            showDeleteModal.value = false
+        },
+        preserveScroll: false,
+        preserveState: false
+    })
 }
 </script>
 

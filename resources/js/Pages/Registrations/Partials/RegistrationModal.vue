@@ -9,7 +9,11 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const form = ref({ user_id: '', event_id: '', errors: {} })
+const form = ref({
+    user_id: '',
+    event_id: '',
+    errors: {}
+})
 
 function registerUser() {
     form.value.errors = {}
@@ -20,7 +24,7 @@ function registerUser() {
             form.value.user_id = ''
             form.value.event_id = ''
             emit('close')
-        },
+        }
     })
 }
 </script>
@@ -35,7 +39,7 @@ function registerUser() {
                 <label for="user_id" class="block text-sm font-medium text-gray-700 mb-1">User</label>
                 <select v-model="form.user_id" class="w-full border border-gray-300 rounded px-3 py-2">
                     <option value="">Select a user</option>
-                    <option v-for="user in users.data" :key="user.id" :value="user.id">
+                    <option v-for="user in users" :key="user.id" :value="user.id">
                         {{ user.name }}
                     </option>
                 </select>
@@ -47,7 +51,7 @@ function registerUser() {
                 <label for="event_id" class="block text-sm font-medium text-gray-700 mb-1">Event</label>
                 <select v-model="form.event_id" class="w-full border border-gray-300 rounded px-3 py-2">
                     <option value="">Select an event</option>
-                    <option v-for="event in events.data" :key="event.id" :value="event.id">
+                    <option v-for="event in events" :key="event.id" :value="event.id">
                         {{ event.title }}
                     </option>
                 </select>

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\EventStatus;
 use App\Enums\UserRole;
 use App\Models\Event;
 use App\Models\User;
@@ -11,28 +12,42 @@ class EventPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool
+    public function before(User $user, $ability): ?true
     {
-        return $user->role === UserRole::Admin;
+        if ($user->role === UserRole::Admin) {
+            return true;
+        }
+
+        return null;
     }
 
-    public function view(User $user, Event $event): bool
+    public function viewAny(User $user): bool
     {
-        return $user->role === UserRole::Admin;
+        return true;
+    }
+
+    public function view(?User $user, Event $event): bool
+    {
+        return $event->status === EventStatus::Published;
     }
 
     public function create(User $user): bool
     {
-        return $user->role === UserRole::Admin;
+        return false;
     }
 
     public function update(User $user, Event $event): bool
     {
-        return $user->role === UserRole::Admin;
+        return false;
     }
 
     public function delete(User $user, Event $event): bool
     {
-        return $user->role === UserRole::Admin && $event->registrations()->count() === 0;
+        return false;
+    }
+
+    public function register(User $user, Event $event): bool
+    {
+        return $event->status === EventStatus::Published;
     }
 }
